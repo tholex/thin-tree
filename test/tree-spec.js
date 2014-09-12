@@ -139,6 +139,45 @@ describe('Thin Tree', function() {
             expect(turtle.getChildren()[0].hasChildren()).to.equal(false);
         });
     });
+
+    describe('PreOrder Traverse', function() {
+        it('should work for a single node', function() {
+            var tree = new TT({
+                name: "Foo",
+                children: []
+            });
+
+            expect(tree.preOrderTraverse()).to.be.array;
+            expect(tree.preOrderTraverse().length).to.equal(1);
+            expect(tree.preOrderNext()).to.be.equal(null);
+        });
+
+        it('should traverse a complex tree in order', function() {
+            var tree = new TT({
+                name: "R",
+                children: [{
+                    name: "RA"
+                }, {
+                    name: "RB",
+                    children: [{
+                        name: "RBA"
+                    },{
+                        name: "RBB"
+                    }]
+                }]
+            });
+
+            expect(tree.preOrderTraverse()).to.be.array;
+            expect(tree.preOrderTraverse().length).to.equal(5);
+            expect(tree.preOrderNext().name).to.be.equal("RA");
+
+            var traverse = tree.preOrderTraverse()
+            var names = ["R", "RA", "RB", "RBA", "RBB"]
+            for (var i; i < traverse.length; i++) {
+                expect(traverse[i].name).to.equal(names[i]);
+            }
+        });
+    })
 });
 
 describe('Find Tree', function() {

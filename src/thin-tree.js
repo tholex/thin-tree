@@ -23,7 +23,6 @@ ThinTree.prototype.initialize = function(node) {
     this.addChildren();
 }
 
-
 ThinTree.prototype.flatten = function() {
     return this._flattened = this._flattened || _.reduce(
         this.getChildren(),
@@ -33,6 +32,31 @@ ThinTree.prototype.flatten = function() {
     );
 }
 
+ThinTree.prototype.preOrderTraverse = function(accumulator) {
+    if (this._preOrder && _.isEmpty(accumulator)) {
+        return this._preOrder;
+    }
+    accumulator = accumulator || [];
+
+    // Add this node
+    accumulator.push(this);
+
+    // Add children (recursively)
+    _.each(this.getChildren(), function(childNode) {
+        accumulator = accumulator.concat(childNode.preOrderTraverse(accumulator));
+    })
+
+    return this._preOrder = accumulator;
+}
+
+ThinTree.prototype.preOrderNext = function(node) {
+    var thisNodeIndex = this.root.preOrderTraverse().indexOf(this);
+    if (thisNodeIndex < this.root.preOrderTraverse().length - 1) {
+        return this.root.preOrderTraverse()[thisNodeIndex + 1];
+    } else {
+        return null;
+    }
+}
 
 ThinTree.prototype.getChildren = function() {
     return this[this._key];
@@ -47,13 +71,16 @@ ThinTree.prototype.hasChildren = function(children) {
     return !_.isEmpty(this.getChildren());
 }
 
+ThinTree.prototype.isRoot = function() {
+    return this.root === this;
+}
+
 ThinTree.prototype.addChild = function(node, index) {
     if (_.isPlainObject(node)) {
         node = new this.constructor(node); }
     index = _.isNumber(index) ? index : this.getChildren().length;
     return this.getChildren()[index] = node;
 }
-
 
 ThinTree.prototype.addChildren = function() {
     // Creates node for each child element
@@ -189,6 +216,11 @@ var __extends = function(proto, Parent) {
     return Child;
 };
 
+///////////////////////////////////////////////////////////////////////////////
+///
+///                            Utility
+///
+///////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
 ///
